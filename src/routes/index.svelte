@@ -20,7 +20,7 @@
 	];
 </script>
 
-<div class="container mx-auto px-4">
+<div class="container mx-auto px-4 ">
 	<h1>Welcome to SvelteKit</h1>
 
 	<FeedbackList {feedbacks} />

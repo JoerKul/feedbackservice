@@ -10,7 +10,7 @@
 		</div>
 	</div>
 	<div
-		class="absolute bg-primary rounded-full w-14 h-14 -left-5 -top-5 ring ring-primary ring-offset-gray-50 ring-offset-2"
+		class="absolute bg-secondary-focus rounded-full w-14 h-14 -left-5 -top-5 ring ring-secondary-focus ring-offset-gray-50 ring-offset-2"
 	>
 		<p class="text-center pt-4 text-primary-content">{feedbackItem.rating}</p>
 	</div>
