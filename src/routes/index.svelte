@@ -1,4 +1,6 @@
 <script>
+	import RangeSlider from 'svelte-range-slider-pips';
+
 	import FeedbackForm from '../components/FeedbackForm.svelte';
 	import FeedbackStats from '../components/FeedbackStats.svelte';
 	import FeedbackList from '../components/FeedbackList.svelte';
@@ -46,11 +48,12 @@
 		}
 	];
 
-	$: sum = feedbacks.reduce((a, { rating }) => a + rating, 0);
-	$: avg = sum / feedbacks.length || 0;
-	$: count = feedbacks.length;
+	let hue = [360];
+	$: lightColor = `hsl(${Math.round(hue[0] - 10)}, 66%, 51%)`;
+	$: color = `hsl(${Math.round(hue[0])}, 66%, 54%)`;
+	$: formatedHue = Math.round(hue / 10);
 
-	let showMenu = false;
+	$: showMenu = true;
 </script>
 
 <!-- <div class="container mx-auto px-6 sm:px-4">
@@ -63,7 +66,7 @@
 
 <section class="w-full px-3 antialiased bg-indigo-600 lg:px-6">
 	<div class="mx-auto max-w-7xl">
-		<nav class="flex items-center w-full h-24 select-none" x-data="{showMenu} }">
+		<nav class="flex items-center w-full h-24 select-none">
 			<div
 				class="relative flex flex-wrap items-center justify-between w-full h-24 mx-auto font-medium md:justify-center"
 			>
@@ -74,7 +77,7 @@
 				</a>
 				<div
 					class="fixed top-0 left-0 z-40 items-center hidden w-full h-full p-3 text-xl bg-gray-900 bg-opacity-50 md:text-sm lg:text-base md:w-3/4 md:bg-transparent md:p-0 md:relative md:flex"
-					:class={showMenu === true ? 'flex' : 'hidden'}
+					class:hidden={showMenu}
 				>
 					<div
 						class="flex-col w-full  h-full overflow-hidden bg-white rounded-lg select-none md:bg-transparent md:rounded-none md:relative md:flex md:flex-row md:overflow-auto"
@@ -122,28 +125,27 @@
 				<div
 					on:click={() => (showMenu = !showMenu)}
 					class="absolute right-0 z-50 flex flex-col items-end w-10 h-10 p-2 mr-4 rounded-full cursor-pointer md:hidden hover:bg-gray-900 hover:bg-opacity-10 text-gray-100"
-					:class={showMenu === true ? 'text-gray-400' : 'text-gray-100'}
 				>
 					<svg
 						class="w-6 h-6"
-						x-show="!showMenu"
 						fill="none"
 						stroke-linecap="round"
 						stroke-linejoin="round"
 						stroke-width="2"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
+						class:hidden={!showMenu}
 					>
 						<path d="M4 6h16M4 12h16M4 18h16" />
 					</svg>
 					<svg
 						class="w-6 h-6"
-						x-show="showMenu"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
 						xmlns="http://www.w3.org/2000/svg"
 						style="display: none;"
+						class:hidden={showMenu}
 					>
 						<path
 							stroke-linecap="round"
@@ -162,40 +164,59 @@
 				<span class="block">How would you rate your</span>
 				<span class="relative inline-block mt-3  text-white">products we build</span>
 			</h1>
-			<div
-				class="max-w-lg mx-auto mt-6 text-sm text-center text-indigo-200 md:mt-12 sm:text-base md:max-w-xl md:text-lg xl:text-xl"
-			>
-				If you're ready to change the way you've been automating, use to make it fun and easy!
-			</div>
-			<div
-				class="relative flex items-center max-w-md mx-auto mt-12 overflow-hidden text-center rounded-full"
-				data-dashlane-rid="bd17d1ca3a893f28"
-				data-form-type="other"
-			>
-				<input
-					type="text"
-					name="email"
-					placeholder="Tell us something that keeps you comming back"
-					class="w-full h-12 px-6 py-2 font-medium text-indigo-800 focus:outline-none"
-					data-dashlane-rid="8abe8cc49d2b073b"
-					data-kwimpalastatus="alive"
-					data-kwimpalaid="1638214167818-1"
-					data-form-type="email"
-				/>
-				<span class="relative top-0 right-0 block">
-					<button
-						type="button"
-						class="inline-flex items-center w-32 h-12 px-8 text-base font-bold leading-6 text-white transition duration-150 ease-in-out bg-indigo-400 border border-transparent hover:bg-indigo-700 focus:outline-none active:bg-indigo-700"
-						data-dashlane-rid="71b0fd74b18191db"
-						data-dashlane-label="true"
-						data-form-type="action"
-					>
-						Sign Up
-					</button>
-				</span>
-			</div>
-			<div class="mt-8 text-sm text-indigo-300">
-				By signing up, you agree to our terms and services.
+
+			<div class="mx-auto mt-20 w-10/12">
+				<div style="--range-handle-focus: {color}; --range-range: {lightColor}">
+					<RangeSlider
+						id="color-pips"
+						bind:values={hue}
+						range="min"
+						min={10}
+						max={100}
+						pipstep={10}
+						pips
+						first={false}
+						last={false}
+					/>
+				</div>
+
+				<div class="stat-value text-indigo-100 text-6xl">{formatedHue}</div>
+
+				<div
+					class="max-w-lg mx-auto mt-6 text-sm text-center text-indigo-200 md:mt-12 sm:text-base md:max-w-xl md:text-lg xl:text-xl"
+				>
+					If you're ready to change the way you've been automating, use to make it fun and easy!
+				</div>
+				<div
+					class="relative flex items-center max-w-md mx-auto mt-12 overflow-hidden text-center rounded-full"
+					data-dashlane-rid="bd17d1ca3a893f28"
+					data-form-type="other"
+				>
+					<input
+						type="text"
+						name="email"
+						placeholder="Tell us something that keeps you comming back"
+						class="w-full h-12 px-6 py-2 font-medium text-indigo-800 focus:outline-none"
+						data-dashlane-rid="8abe8cc49d2b073b"
+						data-kwimpalastatus="alive"
+						data-kwimpalaid="1638214167818-1"
+						data-form-type="email"
+					/>
+					<span class="relative top-0 right-0 block">
+						<button
+							type="button"
+							class="inline-flex items-center w-32 h-12 px-8 text-base font-bold leading-6 text-white transition duration-150 ease-in-out bg-indigo-400 border border-transparent hover:bg-indigo-700 focus:outline-none active:bg-indigo-700"
+							data-dashlane-rid="71b0fd74b18191db"
+							data-dashlane-label="true"
+							data-form-type="action"
+						>
+							Sign Up
+						</button>
+					</span>
+				</div>
+				<div class="mt-8 text-sm text-indigo-300">
+					By signing up, you agree to our terms and services.
+				</div>
 			</div>
 		</div>
 	</div>
@@ -508,9 +529,44 @@
 			</div>
 			<div class="w-full md:w-1/2">
 				<div class="w-full h-auto overflow-hidden rounded-md shadow-xl sm:rounded-xl">
-					<img src="https://cdn.devdojo.com/images/november2020/hero-image.jpeg" />
+					<img
+						src="https://cdn.devdojo.com/images/november2020/hero-image.jpeg"
+						alt="cool heros showing"
+					/>
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
+
+<style>
+	div :global(#color-pips) {
+		height: 15px;
+	}
+	div :global(#color-pips .rangeBar) {
+		height: 15px;
+	}
+	div :global(#color-pips .rangeHandle) {
+		top: 7px;
+		height: 35px;
+		width: 35px;
+	}
+	div :global(#color-pips .rangeHandle .rangeNub) {
+		border: 3px solid rgb(246, 252, 255);
+	}
+	div :global(#color-pips .rangePips) {
+		bottom: 0px;
+		z-index: 1;
+	}
+	div :global(#color-pips .rangePips .pip) {
+		background: rgb(246, 252, 255);
+		border-radius: 30px;
+		width: 10px;
+		height: 10px;
+		transform: translateX(-50%);
+	}
+	div :global(#color-pips .rangePips .pip.in-range) {
+		background: rgb(0, 0, 0);
+		opacity: 0.35;
+	}
+</style>
